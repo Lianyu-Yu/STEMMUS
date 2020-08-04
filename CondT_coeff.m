@@ -1,13 +1,31 @@
 function CondT_coeff
 global ML ND MN Theta_LL Lambda1 Lambda2 Lambda3 c_unsat Lambda_eff RHO_bulk
 global Theta_g RHODA RHOV c_a c_V c_L NL nD
-global ThmrlCondCap ETCON EHCAP
+global ThmrlCondCap ETCON EHCAP EfTCON TETCON KT ThermCond
 
 if ThmrlCondCap==1
     run EfeCapCond;
     for ML=1:NL
-        for ND=1:nD        
+        for ND=1:nD
+            
+
+            if ThermCond==1
             Lambda_eff(ML,ND)=ETCON(ML,ND);
+            elseif ThermCond==2
+            Lambda_eff(ML,ND)=EfTCON(ML,ND)/100;
+            elseif ThermCond==3
+            Lambda_eff(ML,ND)=TETCON(ML,ND);
+            elseif ThermCond==4
+            Lambda_eff(ML,ND)=EfTCON(ML,ND)/100;
+            end
+
+            if Lambda_eff(ML,ND)<=0
+                Lambda_eff(ML,ND)=0.0008;
+            elseif Lambda_eff(ML,ND)>=0.02
+                Lambda_eff(ML,ND)=0.02;
+            else
+                Lambda_eff(ML,ND)=Lambda_eff(ML,ND);
+            end
             c_unsat(ML,ND)=EHCAP(ML,ND);
         end
     end
